@@ -30,7 +30,7 @@ automatically. Ideally it should be run at 4:00 PM PKT (UTC+5) every day.
 Here is the crontab entry to run the script daily at 4:00 PM PKT:
 
 ```cron
-0 11 * * * /usr/bin/python3 /sbp-war-api/fetch.py
+0 11 * * * /usr/bin/python3 /sbp-war-api/fetch.py >> /sbp-war-api/fetch.log 2>&1
 ```
 
 ## Running the API

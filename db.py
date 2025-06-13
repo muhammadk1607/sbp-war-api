@@ -1,10 +1,11 @@
 import json
+import os
 import sqlite3
 from typing import Dict, Optional
 
 from pydantic import BaseModel
 
-DB_PATH = "exchange_rates.db"
+DB_PATH = os.getenv("DB_PATH", "exchange_rates.db")
 
 
 class ExchangeRate(BaseModel):
