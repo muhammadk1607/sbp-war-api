@@ -1,4 +1,5 @@
 import datetime
+import sys
 from io import BytesIO
 
 import pdfplumber
@@ -7,17 +8,16 @@ import requests
 from db import create_db, save_rates_to_db
 
 
-def update_exchange_rate():
+def update_exchange_rate(date: datetime.date = datetime.date.today()) -> None:
     currencies = ["AED", "AUD", "CAD", "CHF", "CNY", "EUR", "GBP", "JPY", "SAR", "USD"]
 
-    today = datetime.date.today()
-    date_str = today.isoformat()
-    url = f"https://www.sbp.org.pk/ecodata/rates/war/{today.strftime('%Y/%b/%d-%b-%y')}.pdf"
+    date_str = date.isoformat()
+    url = f"https://www.sbp.org.pk/ecodata/rates/war/{date.strftime('%Y/%b/%d-%b-%Y')}.pdf"
 
     try:
         response = requests.get(url)
         if response.status_code == 404:
-            print("Today's PDF file couldn't be found")
+            print(f"{date_str} PDF file couldn't be found")
             return
         response.raise_for_status()
 
@@ -60,5 +60,13 @@ if __name__ == "__main__":
 
     create_db()  # Ensure the database is created before saving rates
 
+    # Read the date from the command line argument or use today's date
+    date = datetime.date.today()
+    if len(sys.argv) > 1:
+        try:
+            date = datetime.datetime.strptime(sys.argv[1], "%Y-%m-%d").date()
+        except ValueError:
+            print("Invalid date format. Using today's date instead.")
+
     # Run the task
-    update_exchange_rate()
+    update_exchange_rate(date)
