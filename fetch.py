@@ -12,7 +12,7 @@ def update_exchange_rate(date: datetime.date = datetime.date.today()) -> None:
     currencies = ["AED", "AUD", "CAD", "CHF", "CNY", "EUR", "GBP", "JPY", "SAR", "USD"]
 
     date_str = date.isoformat()
-    url = f"https://www.sbp.org.pk/ecodata/rates/war/{date.strftime('%Y/%b/%d-%b-%Y')}.pdf"
+    url = f"https://www.sbp.org.pk/ecodata/rates/war/{date.strftime('%Y/%b/%d-%b-%y')}.pdf"
 
     try:
         response = requests.get(url)
