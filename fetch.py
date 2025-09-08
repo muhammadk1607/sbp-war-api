@@ -12,46 +12,51 @@ def update_exchange_rate(date: datetime.date = datetime.date.today()) -> None:
     currencies = ["AED", "AUD", "CAD", "CHF", "CNY", "EUR", "GBP", "JPY", "SAR", "USD"]
 
     date_str = date.isoformat()
-    url = f"https://www.sbp.org.pk/ecodata/rates/war/{date.strftime('%Y/%b/%d-%b-%Y')}.pdf"
+    urls = [
+        f"https://www.sbp.org.pk/ecodata/rates/war/{date.strftime('%Y/%b/%d-%b-%Y')}.pdf",
+        f"https://www.sbp.org.pk/ecodata/rates/war/{date.strftime('%Y/%b/%d-%m-%Y')}.pdf",
+    ]
 
-    try:
-        response = requests.get(url)
-        if response.status_code == 404:
-            print(f"{date_str} PDF file couldn't be found")
-            return
-        response.raise_for_status()
+    for url in urls:
+        print(f"Fetching exchange rates from: {url}")
+        try:
+            response = requests.get(url)
+            if response.status_code == 404:
+                print(f"{date_str} PDF file couldn't be found")
+                continue
+            response.raise_for_status()
 
-        rates = {}
+            rates = {}
 
-        # Use pdfplumber to extract text from the PDF
-        with pdfplumber.open(BytesIO(response.content)) as pdf:
-            for page in pdf.pages:
-                text = page.extract_text()
-                if not text:
-                    continue
-                lines = text.split("\n")
-                for line in lines:
-                    for currency in currencies:
-                        if currency in line:
-                            parts = line.split()
-                            try:
-                                idx = parts.index(currency)
-                                rate_str = parts[idx + 1]  # typically Buying Rate
-                                rate = round(float(rate_str), 2)
-                                rates[currency] = rate
-                                print(f"{currency}_TO_PKR: {rate}")
-                            except (IndexError, ValueError):
-                                print(f"Failed to extract rate from: {line}")
-                            break
+            # Use pdfplumber to extract text from the PDF
+            with pdfplumber.open(BytesIO(response.content)) as pdf:
+                for page in pdf.pages:
+                    text = page.extract_text()
+                    if not text:
+                        continue
+                    lines = text.split("\n")
+                    for line in lines:
+                        for currency in currencies:
+                            if currency in line:
+                                parts = line.split()
+                                try:
+                                    idx = parts.index(currency)
+                                    rate_str = parts[idx + 1]  # typically Buying Rate
+                                    rate = round(float(rate_str), 2)
+                                    rates[currency] = rate
+                                    print(f"{currency}_TO_PKR: {rate}")
+                                except (IndexError, ValueError):
+                                    print(f"Failed to extract rate from: {line}")
+                                break
 
-        if rates:
-            save_rates_to_db(date_str, rates)
-            print("Exchange rates saved to the database")
-        else:
-            print("No exchange rates found in the PDF")
-    except requests.exceptions.RequestException as e:
-        print("Script update_exchange_rate failed in execution")
-        print(e)
+            if rates:
+                save_rates_to_db(date_str, rates)
+                print("Exchange rates saved to the database")
+            else:
+                print("No exchange rates found in the PDF")
+        except requests.exceptions.RequestException as e:
+            print(f"Script update_exchange_rate failed in execution for url: {url}")
+            print(e)
 
 
 if __name__ == "__main__":
