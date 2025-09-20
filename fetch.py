@@ -1,4 +1,5 @@
 import datetime
+import re
 import sys
 from io import BytesIO
 
@@ -38,10 +39,20 @@ def update_exchange_rate(date: datetime.date = datetime.date.today()) -> None:
                     for line in lines:
                         for currency in currencies:
                             if currency in line:
-                                parts = line.split()
+                                parts = line.split(" ", 1)
                                 try:
                                     idx = parts.index(currency)
-                                    rate_str = parts[idx + 1]  # typically Buying Rate
+                                    second_part = parts[idx + 1]
+
+                                    if len(second_part.split()) > 2:
+                                        rate_str = re.sub(
+                                            r"(\d)\s+([\d\.])",
+                                            r"\1\2",
+                                            second_part,
+                                            count=1,
+                                        ).split(" ")[0]
+                                    else:
+                                        rate_str = second_part.split(" ")[0]
                                     rate = round(float(rate_str), 2)
                                     rates[currency] = rate
                                     print(f"{currency}_TO_PKR: {rate}")
