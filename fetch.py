@@ -16,6 +16,7 @@ def update_exchange_rate(date: datetime.date = datetime.date.today()) -> None:
     urls = [
         f"https://www.sbp.org.pk/ecodata/rates/war/{date.strftime('%Y/%b/%d-%b-%Y')}.pdf",
         f"https://www.sbp.org.pk/ecodata/rates/war/{date.strftime('%Y/%b/%d-%m-%Y')}.pdf",
+        f"https://www.sbp.org.pk/ecodata/rates/war/{date.strftime('%Y/%b/%d-%b-%y')}.pdf",
     ]
 
     for url in urls:
