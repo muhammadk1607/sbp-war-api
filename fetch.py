@@ -22,7 +22,7 @@ def update_exchange_rate(date: datetime.date = datetime.date.today()) -> None:
     for url in urls:
         print(f"Fetching exchange rates from: {url}")
         try:
-            response = requests.get(url)
+            response = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"})
             if response.status_code == 404:
                 print(f"{date_str} PDF file couldn't be found")
                 continue
