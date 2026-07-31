@@ -14,15 +14,21 @@ def update_exchange_rate(date: datetime.date = datetime.date.today()) -> None:
 
     date_str = date.isoformat()
     urls = [
-        f"https://www.sbp.org.pk/ecodata/rates/war/{date.strftime('%Y/%b/%d-%b-%Y')}.pdf",
-        f"https://www.sbp.org.pk/ecodata/rates/war/{date.strftime('%Y/%b/%d-%m-%Y')}.pdf",
-        f"https://www.sbp.org.pk/ecodata/rates/war/{date.strftime('%Y/%b/%d-%b-%y')}.pdf",
+        # f"https://www.sbp.org.pk/ecodata/rates/war/{date.strftime('%Y/%b/%d-%b-%Y')}.pdf",
+        # f"https://www.sbp.org.pk/ecodata/rates/war/{date.strftime('%Y/%b/%d-%m-%Y')}.pdf",
+        # f"https://www.sbp.org.pk/ecodata/rates/war/{date.strftime('%Y/%b/%d-%b-%y')}.pdf",
+        "https://www.sbp.org.pk/assets/document/weighted-average-customer-exchange-rates-31-june-2026.pdf",
     ]
 
     for url in urls:
         print(f"Fetching exchange rates from: {url}")
         try:
-            response = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"})
+            response = requests.get(
+                url,
+                headers={
+                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                },
+            )
             if response.status_code == 404:
                 print(f"{date_str} PDF file couldn't be found")
                 continue
