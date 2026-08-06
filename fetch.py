@@ -14,10 +14,7 @@ def update_exchange_rate(date: datetime.date = datetime.date.today()) -> None:
 
     date_str = date.isoformat()
     urls = [
-        # f"https://www.sbp.org.pk/ecodata/rates/war/{date.strftime('%Y/%b/%d-%b-%Y')}.pdf",
-        # f"https://www.sbp.org.pk/ecodata/rates/war/{date.strftime('%Y/%b/%d-%m-%Y')}.pdf",
-        # f"https://www.sbp.org.pk/ecodata/rates/war/{date.strftime('%Y/%b/%d-%b-%y')}.pdf",
-        "https://www.sbp.org.pk/assets/document/weighted-average-customer-exchange-rates-31-june-2026.pdf",
+        f"https://www.sbp.org.pk/assets/document/weighted-average-customer-exchange-rates-{date.strftime('%d-%B-%Y').lower()}.pdf"
     ]
 
     for url in urls:
